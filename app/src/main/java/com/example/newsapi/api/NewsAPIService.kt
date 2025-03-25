@@ -11,4 +11,11 @@ interface NewsAPIService {
         @Query("country") country: String,
         @Query("apiKey") apiKey: String
     ): Call<NewsResponse>
+
+    @GET("v2/everything")
+    fun searchArticles(
+        @Query("q") query: String,
+        @Query("apiKey") apiKey: String
+    ):Call<NewsResponse>
+
 }

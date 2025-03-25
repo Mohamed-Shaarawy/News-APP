@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navgraph"
+    app:startDestination="@id/newsRecyclerFragment">
+
+    <fragment
+        android:id="@+id/newsRecyclerFragment"
+        android:name="com.example.newsapi.NewsRecyclerFragment"
+        android:label="fragment_news_recycler"
+        tools:layout="@layout/fragment_news_recycler" >
+        <action
+            android:id="@+id/action_newsRecyclerFragment_to_searchResultsFragment"
+            app:destination="@id/searchResultsFragment" />
+        <action
+            android:id="@+id/action_newsRecyclerFragment_to_newsDetailsFragment"
+            app:destination="@id/newsDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="com.example.newsapi.SearchResultsFragment"
+        android:label="fragment_search_results"
+        tools:layout="@layout/fragment_search_results" >
+        <action
+            android:id="@+id/action_searchResultsFragment_to_newsRecyclerFragment"
+            app:destination="@id/newsRecyclerFragment" />
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/newsDetailsFragment"
+        android:name="com.example.newsapi.NewsDetailsFragment"
+        android:label="fragment_news_details"
+        tools:layout="@layout/fragment_news_details" />
+</navigation>
