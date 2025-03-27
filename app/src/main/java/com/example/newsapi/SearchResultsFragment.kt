@@ -28,6 +28,8 @@ class SearchResultsFragment : Fragment() {
     private var NewsDesc = ArrayList<String>()
     private var NewsDate = ArrayList<String>()
     private var NewsSource = ArrayList<String>()
+    private var content = ArrayList<String?>()
+    private var URL = ArrayList<String>()
 
     private val BASE_URL = "https://newsapi.org/"
     private val API_Key = "9a31420d0db94cbab8274e37c6fdcda5"
@@ -81,6 +83,8 @@ class SearchResultsFragment : Fragment() {
                             NewsImage.add(article.urlToImage)
                             NewsDate.add(article.publishedAt)
                             NewsSource.add(article.source.name)
+                            content.add(article.content)
+                            URL.add(article.url)
                         }
                     } else {
                         NewsImage.add(R.drawable.imageloadfailed.toString())
@@ -101,8 +105,21 @@ class SearchResultsFragment : Fragment() {
                         NewsDesc,
                         NewsDate,
                         NewsSource,
-                        requireContext()
-                    )
+                        content,
+                        URL,
+                    ){ title, desc, imageUrl, date, source, content, url ->
+                        val action = SearchResultsFragmentDirections.
+                        actionSearchResultsFragmentToNewsDetailsFragment(
+                                title = title,
+                                desc = desc,
+                                imageUrl = imageUrl,
+                                date = date,
+                                source = source,
+                                content = content,
+                                url = url
+                            )
+                        findNavController().navigate(action)
+                    }
                     recyclerView.adapter = newsAdapter
                 }
 
@@ -120,8 +137,22 @@ class SearchResultsFragment : Fragment() {
                         NewsDesc,
                         NewsDate,
                         NewsSource,
-                        requireContext()
-                    )
+                        content,
+                        URL,
+                    ){ title, desc, imageUrl, date, source, content, url ->
+                        val action = NewsRecyclerFragmentDirections
+                            .actionNewsRecyclerFragmentToNewsDetailsFragment(
+                                title = title,
+                                desc = desc,
+                                imageUrl = imageUrl,
+                                date = date,
+                                source = source,
+                                content = content,
+                                url = url
+                            )
+                        findNavController().navigate(action)
+                    }
+
                     recyclerView.adapter = newsAdapter
 
                     Log.e("NewsRecyclerFragment", "API Error: ${t.message}")

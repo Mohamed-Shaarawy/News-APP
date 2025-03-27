@@ -10,28 +10,76 @@
         android:name="com.example.newsapi.NewsRecyclerFragment"
         android:label="fragment_news_recycler"
         tools:layout="@layout/fragment_news_recycler" >
+
         <action
             android:id="@+id/action_newsRecyclerFragment_to_searchResultsFragment"
             app:destination="@id/searchResultsFragment" />
+
         <action
             android:id="@+id/action_newsRecyclerFragment_to_newsDetailsFragment"
             app:destination="@id/newsDetailsFragment" />
+        <action
+            android:id="@+id/action_newsRecyclerFragment_to_favouriteHeadlinesFragment"
+            app:destination="@id/favouriteHeadlinesFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/searchResultsFragment"
         android:name="com.example.newsapi.SearchResultsFragment"
         android:label="fragment_search_results"
         tools:layout="@layout/fragment_search_results" >
-        <action
-            android:id="@+id/action_searchResultsFragment_to_newsRecyclerFragment"
-            app:destination="@id/newsRecyclerFragment" />
+
         <argument
             android:name="searchQuery"
             app:argType="string" />
+
+        <!-- ✅ ADDED: Action to open NewsDetailsFragment from SearchResultsFragment -->
+        <action
+            android:id="@+id/action_searchResultsFragment_to_newsDetailsFragment"
+            app:destination="@id/newsDetailsFragment" />
+
+        <action
+            android:id="@+id/action_searchResultsFragment_to_newsRecyclerFragment"
+            app:destination="@id/newsRecyclerFragment" />
+        <action
+            android:id="@+id/action_searchResultsFragment_to_newsDetailsFragment2"
+            app:destination="@id/newsDetailsFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/newsDetailsFragment"
         android:name="com.example.newsapi.NewsDetailsFragment"
         android:label="fragment_news_details"
-        tools:layout="@layout/fragment_news_details" />
+        tools:layout="@layout/fragment_news_details">
+
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="desc"
+            app:argType="string" />
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="string" />
+        <argument
+            android:name="source"
+            app:argType="string" />
+        <argument
+            android:name="content"
+            app:argType="string"/>
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_newsDetailsFragment_to_newsRecyclerFragment"
+            app:destination="@id/newsRecyclerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouriteHeadlinesFragment"
+        android:name="com.example.newsapi.FavouriteHeadlinesFragment"
+        android:label="fragment_favourite_headlines"
+        tools:layout="@layout/fragment_favourite_headlines" />
 </navigation>

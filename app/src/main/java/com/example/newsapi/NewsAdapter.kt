@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
@@ -16,7 +15,10 @@ class NewsAdapter(
     var NewsDesc: ArrayList<String>,
     var NewsDate: ArrayList<String>,
     var NewsSource: ArrayList<String>,
-    var context:Context
+    var content: ArrayList<String?>,
+    var URL: ArrayList<String>,
+    private val onItemClick: (title: String, desc: String, imageUrl: String, date: String, source: String, content:String ,url: String) -> Unit
+
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>(){
     class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         var imageViewNewsImg: ImageView = itemView.findViewById<ImageView>(R.id.imageViewNewsImg)
@@ -25,6 +27,7 @@ class NewsAdapter(
         var textViewNewsDate: TextView = itemView.findViewById<TextView>(R.id.textViewDate)
         var textViewNewsSource: TextView = itemView.findViewById<TextView>(R.id.textViewSource)
         var cardView: View = itemView.findViewById<View>(R.id.cardView)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
@@ -37,6 +40,8 @@ class NewsAdapter(
         return NewsImage.size
     }
 
+
+
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         Glide.with(holder.itemView.context)
             .load(NewsImage.get(position))
@@ -47,10 +52,23 @@ class NewsAdapter(
         holder.textViewNewsDesc.text = NewsDesc.get(position)
         holder.textViewNewsDate.text = NewsDate.get(position)
         holder.textViewNewsSource.text = NewsSource.get(position)
-
         holder.cardView.setOnClickListener{
-            Toast.makeText(context, "Item Clicked", Toast.LENGTH_SHORT).show()
+
+
+            onItemClick(
+                NewsTitle[position],
+                NewsDesc[position],
+                NewsImage[position] ?: "Error loading image",
+                NewsDate[position],
+                NewsSource[position],
+                URL[position],
+                content[position] ?: "Cannot fetch content"
+            )
+
+
+
         }
+
 
     }
 }
