@@ -33,7 +33,6 @@
             android:name="searchQuery"
             app:argType="string" />
 
-        <!-- ✅ ADDED: Action to open NewsDetailsFragment from SearchResultsFragment -->
         <action
             android:id="@+id/action_searchResultsFragment_to_newsDetailsFragment"
             app:destination="@id/newsDetailsFragment" />
@@ -81,5 +80,9 @@
         android:id="@+id/favouriteHeadlinesFragment"
         android:name="com.example.newsapi.FavouriteHeadlinesFragment"
         android:label="fragment_favourite_headlines"
-        tools:layout="@layout/fragment_favourite_headlines" />
+        tools:layout="@layout/fragment_favourite_headlines" >
+        <action
+            android:id="@+id/action_favouriteHeadlinesFragment_to_newsRecyclerFragment"
+            app:destination="@id/newsRecyclerFragment" />
+    </fragment>
 </navigation>

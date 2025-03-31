@@ -18,11 +18,10 @@ interface NewsAPIService {
         @Query("apiKey") apiKey: String
     ):Call<NewsResponse>
 
-    @GET("v2/top-headlines")
-    fun getFavHeadlines(
-        @Query("country") country: String,
-        @Query("category") sources: String,
+    @GET("v2/everything")
+    fun getFavCategories(
+        @Query("q") query: String,
+        @Query("language") language: String = "en",
         @Query("apiKey") apiKey: String
-    ): Call<NewsResponse>
-
+    )
 }
