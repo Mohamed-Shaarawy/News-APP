@@ -19,6 +19,13 @@ interface NewsAPIService {
     ):Call<NewsResponse>
 
     @GET("v2/everything")
+    fun sort(
+        @Query("q") query: String,
+        @Query("sortBy") sortBy: String,
+        @Query("apiKey") apiKey: String
+    ): Call<NewsResponse>
+
+    @GET("v2/everything")
     fun getFavCategories(
         @Query("q") query: String,
         @Query("language") language: String = "en",

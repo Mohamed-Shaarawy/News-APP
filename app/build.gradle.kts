@@ -7,7 +7,9 @@ plugins {
 android {
     namespace = "com.example.newsapi"
     compileSdk = 35
-
+    buildFeatures{
+        viewBinding = true
+    }
     defaultConfig {
         applicationId = "com.example.newsapi"
         minSdk = 30

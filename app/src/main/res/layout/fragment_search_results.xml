@@ -22,14 +22,27 @@
 
     <Button
         android:id="@+id/buttonReturn"
+        style="@style/CustomButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="55dp"
-        android:layout_marginEnd="319dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="154dp"
         android:text="Return"
-        style="@style/CustomButtonStyle"
-    app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sortSpinner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/sortSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="16dp"
+        android:entries="@array/sort_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,4 +6,10 @@
     <string name="description">description</string>">
     <string name="date"> date </string>
     <string name="source">source</string>
+    <string-array name="sort_options">
+        <item>Relevancy</item>
+        <item>Popularity</item>
+        <item>Published Date</item>
+    </string-array>
+
 </resources>
