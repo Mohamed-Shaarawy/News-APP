@@ -41,15 +41,22 @@ class NewsRecyclerFragment : Fragment() {
         }
         .build()
 
-
     val retrofit = Retrofit.Builder().baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()
         .create(NewsAPIService::class.java)
 
+    private val countryCodeMap = mapOf(
+        "United States" to "us",
+        "Italy" to "it",
+        "Spain" to "es",
+        "Germany" to "de",
+        "France" to "fr",
+    )
+
+
     private lateinit var recyclerView: RecyclerView
-    private lateinit var DetailsRecyclerView: RecyclerView
     private lateinit var newsAdapter: NewsAdapter
 
     private var NewsImage = ArrayList<String?>()
@@ -61,8 +68,8 @@ class NewsRecyclerFragment : Fragment() {
     private var URL = ArrayList<String>()
     lateinit var searchEditText: EditText
     lateinit var btnSearch: Button
-    lateinit var btnFav: Button
     lateinit var bottomNav: BottomNavigationView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,6 +79,9 @@ class NewsRecyclerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // get the passed args
+        val countryName = arguments?.getString("countryName") ?: "US"
+        val categoryName = arguments?.getString("categoryName") ?: ""
         recyclerView = view.findViewById(R.id.recyclerViewNwes)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -80,19 +90,56 @@ class NewsRecyclerFragment : Fragment() {
 
         bottomNav = view.findViewById(R.id.bottomNavigationView)
 
-        retrofit.getTopNews(country = "us", apiKey = API_Key)
+        fetchTopNews(countryName, categoryName)
+
+        btnSearch.setOnClickListener {
+            val searchQuery = searchEditText.text.toString().trim()
+
+            if (searchQuery.isNotEmpty()) {
+                val action = NewsRecyclerFragmentDirections
+                    .actionNewsRecyclerFragmentToSearchResultsFragment(searchQuery)
+                findNavController().navigate(action)
+            }
+        }
+
+        bottomNav.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_favourites -> {
+                    findNavController().navigate(R.id.action_newsRecyclerFragment_to_favouriteHeadlinesFragment)
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    private fun fetchTopNews(country: String, category: String) {
+
+        val countryCode = countryCodeMap[country] ?: "us" // Default to "us" (United States) if country not found
+
+        // Ensure category is correctly passed
+        val categoryName = category
+        Log.d("fetchTopResult", "Fetching news for: $country, Category: $category, CategoryName = $categoryName")  // Log the country and category
+
+        retrofit.getTopNews(country = countryCode.toString(), category = categoryName.toString(), apiKey = API_Key)
             .enqueue(object : Callback<NewsResponse> {
                 override fun onResponse(
                     call: Call<NewsResponse>,
                     response: Response<NewsResponse>
                 ) {
+                    // Clear old data
                     NewsTitle.clear()
                     NewsDesc.clear()
                     NewsImage.clear()
                     NewsDate.clear()
                     NewsSource.clear()
+                    content.clear()
+                    URL.clear()
 
                     if (response.isSuccessful) {
+                        Log.d("NewsAPI", "Successfully fetched news for $country, Category: $category")
+
                         val articles = response.body()?.articles ?: emptyList()
 
                         for (article in articles) {
@@ -104,109 +151,38 @@ class NewsRecyclerFragment : Fragment() {
                             content.add(article.content)
                             URL.add(article.url)
                         }
+
+                        // Initialize the adapter for the first time
+                        if (!::newsAdapter.isInitialized) {
+                            newsAdapter = NewsAdapter(
+                                NewsImage, NewsTitle, NewsDesc, NewsDate, NewsSource, content, URL
+                            ) { title, desc, imageUrl, date, source, content, url ->
+                                val action = NewsRecyclerFragmentDirections
+                                    .actionNewsRecyclerFragmentToNewsDetailsFragment(
+                                        title = title, desc = desc, imageUrl = imageUrl,
+                                        date = date, source = source, content = content, url = url
+                                    )
+                                findNavController().navigate(action)
+                            }
+
+                            // Attach the adapter to the RecyclerView
+                            recyclerView.adapter = newsAdapter
+                        } else {
+                            // If already initialized, just notify the adapter that data has changed
+                            newsAdapter.notifyDataSetChanged()
+                        }
+
                     } else {
-                        NewsImage.add(R.drawable.imageloadfailed.toString())
-                        NewsTitle.add("API Error")
-                        NewsDesc.add("Failed to fetch news. Please try again later.")
-                        NewsDate.add("Unknown Date")
-                        NewsSource.add("NewsAPI")
-                        URL.add("URL to page")
-
-                        Log.e("NewsRecyclerFragment", "Showing fallback data because API failed")
-                        Log.e("NewsRecyclerFragment", "API response code: ${response.code()}")
-                        Log.e(
-                            "NewsRecyclerFragment",
-                            "Error body: ${response.errorBody()?.string()}"
-                        )
+                        Log.e("NewsRecyclerFragment", "API error: ${response.code()}")
+                        Log.e("NewsAPI", "Error fetching news: ${response.code()}")
                     }
-
-                    newsAdapter = NewsAdapter(
-                        NewsImage,
-                        NewsTitle,
-                        NewsDesc,
-                        NewsDate,
-                        NewsSource,
-                        content,
-                        URL,
-                    ) { title, desc, imageUrl, date, source, content, url ->
-                        val action = NewsRecyclerFragmentDirections
-                            .actionNewsRecyclerFragmentToNewsDetailsFragment(
-                                title = title,
-                                desc = desc,
-                                imageUrl = imageUrl,
-                                date = date,
-                                source = source,
-                                content = content,
-                                url = url
-                            )
-                        findNavController().navigate(action)
-                    }
-                    recyclerView.adapter = newsAdapter
                 }
 
                 override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                    // Fallback dummy data in case API fails
-                    NewsImage.add(R.drawable.imageloadfailed.toString())
-                    NewsTitle.add("Connection Error")
-                    NewsDesc.add("Unable to load news. Check your internet connection.")
-                    NewsDate.add("Unknown Date")
-                    NewsSource.add("Offline")
-                    URL.add("URL to page")
-
-                    newsAdapter = NewsAdapter(
-                        NewsImage,
-                        NewsTitle,
-                        NewsDesc,
-                        NewsDate,
-                        NewsSource,
-                        content,
-                        URL,
-                    ) { title, desc, imageUrl, date, source, content, url ->
-                        val action = NewsRecyclerFragmentDirections
-                            .actionNewsRecyclerFragmentToNewsDetailsFragment(
-                                title = title,
-                                desc = desc,
-                                imageUrl = imageUrl,
-                                date = date,
-                                source = source,
-                                content = content,
-                                url = url
-                            )
-                        findNavController().navigate(action)
-                    }
-                    recyclerView.adapter = newsAdapter
-
-                    Log.e("NewsRecyclerFragment", "API Error: ${t.message}")
+                    Log.e("NewsRecyclerFragment", "Error fetching news: ${t.message}")
                 }
             })
-
-
-
-        btnSearch.setOnClickListener {
-            val searchQuery = searchEditText.text.toString().trim()
-
-            if (searchQuery.isNotEmpty()) {
-                val action = NewsRecyclerFragmentDirections
-                    .actionNewsRecyclerFragmentToSearchResultsFragment(searchQuery)
-                findNavController().navigate(action)
-            }
-
-        }
-
-        bottomNav.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_favourites -> {
-                    // Make sure to use the correct action ID here
-                    findNavController().navigate(R.id.action_newsRecyclerFragment_to_favouriteHeadlinesFragment)
-                    true
-                }
-                else -> false
-            }
-        }
-
-
-
-
     }
 
 }
+

@@ -3,14 +3,15 @@ package com.example.newsapi
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 
 
 class CategoriesAdapter(
-    var CategoryName:ArrayList<String>
+    var CategoryName:ArrayList<String>,
+    private val listener:CategoriesListener
+
 ): RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>() {
     class CategoryViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         var textViewCategoryTitle: TextView = itemView.findViewById(R.id.textViewCountryName)
@@ -29,5 +30,8 @@ class CategoriesAdapter(
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.textViewCategoryTitle.text = CategoryName.get(position)
+        holder.cardView.setOnClickListener{
+            listener.onCategoryClickListener(CategoryName = CategoryName.get(position))
+        }
     }
 }

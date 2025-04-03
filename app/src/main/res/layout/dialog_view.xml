@@ -11,7 +11,7 @@
     <EditText
         android:id="@+id/dialogCountryEditText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="37dp"
         android:background="@drawable/rounded_search_bg"
         android:hint="Enter country name"
         android:inputType="text" />

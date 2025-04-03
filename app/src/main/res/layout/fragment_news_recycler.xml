@@ -39,7 +39,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewNwes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/heeder" />
+        app:layout_constraintTop_toBottomOf="@+id/SignupTextView" />
 
     <Button
         android:id="@+id/buttonSearch"
@@ -54,7 +54,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/heeder"
+        android:id="@+id/SignupTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

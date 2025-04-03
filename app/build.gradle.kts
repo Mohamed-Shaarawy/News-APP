@@ -7,12 +7,14 @@ plugins {
 android {
     namespace = "com.example.newsapi"
     compileSdk = 35
-    buildFeatures{
+
+    buildFeatures {
         viewBinding = true
     }
+
     defaultConfig {
         applicationId = "com.example.newsapi"
-        minSdk = 30
+        minSdk = 33
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -52,8 +54,16 @@ dependencies {
 
     // Converter for JSON (Gson)
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    //Glide to convert URL to Image
+    // Glide to convert URL to Image
     implementation ("com.github.bumptech.glide:glide:4.15.1")
+
+    implementation ("androidx.credentials:credentials:1.5.0")
+    implementation ("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation(libs.play.services.auth)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

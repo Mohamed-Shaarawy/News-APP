@@ -8,7 +8,8 @@ import retrofit2.http.Query
 interface NewsAPIService {
     @GET("v2/top-headlines")
     fun getTopNews(
-        @Query("country") country: String,
+        @Query("country") country: String = "us",
+        @Query("category") category:String,
         @Query("apiKey") apiKey: String
     ): Call<NewsResponse>
 
@@ -25,10 +26,10 @@ interface NewsAPIService {
         @Query("apiKey") apiKey: String
     ): Call<NewsResponse>
 
-    @GET("v2/everything")
-    fun getFavCategories(
-        @Query("q") query: String,
-        @Query("language") language: String = "en",
+    @GET("v2/top-headlines")
+    fun getFavCountries(
+        @Query("country") country:String,
         @Query("apiKey") apiKey: String
-    )
+    ): Call<NewsResponse>
+
 }
