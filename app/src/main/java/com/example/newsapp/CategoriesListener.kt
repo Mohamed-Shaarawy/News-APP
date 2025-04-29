@@ -1,4 +1,4 @@
-package com.example.newsapi
+package com.example.newsapp
 
 interface CategoriesListener {
     fun onCategoryClickListener(CategoryName:String)

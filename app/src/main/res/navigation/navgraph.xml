@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/newsRecyclerFragment"
-        android:name="com.example.newsapi.NewsRecyclerFragment"
+        android:name="com.example.newsapp.NewsRecyclerFragment"
         android:label="fragment_news_recycler"
         tools:layout="@layout/fragment_news_recycler" >
 
@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/searchResultsFragment"
-        android:name="com.example.newsapi.SearchResultsFragment"
+        android:name="com.example.newsapp.SearchResultsFragment"
         android:label="fragment_search_results"
         tools:layout="@layout/fragment_search_results" >
 
@@ -55,7 +55,7 @@
 
     <fragment
         android:id="@+id/newsDetailsFragment"
-        android:name="com.example.newsapi.NewsDetailsFragment"
+        android:name="com.example.newsapp.NewsDetailsFragment"
         android:label="fragment_news_details"
         tools:layout="@layout/fragment_news_details">
 
@@ -86,7 +86,7 @@
     </fragment>
     <fragment
         android:id="@+id/favouriteHeadlinesFragment"
-        android:name="com.example.newsapi.FavouriteHeadlinesFragment"
+        android:name="com.example.newsapp.FavouriteHeadlinesFragment"
         android:label="fragment_favourite_headlines"
         tools:layout="@layout/fragment_favourite_headlines" >
         <action
@@ -95,7 +95,7 @@
     </fragment>
     <fragment
         android:id="@+id/signinFragment"
-        android:name="com.example.newsapi.SigninFragment"
+        android:name="com.example.newsapp.SigninFragment"
         android:label="fragment_signin"
         tools:layout="@layout/fragment_signin" >
         <action
@@ -107,7 +107,7 @@
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.example.newsapi.SignupFragment"
+        android:name="com.example.newsapp.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" >
         <action

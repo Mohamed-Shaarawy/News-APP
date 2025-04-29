@@ -1,7 +1,6 @@
-package com.example.newsapi
+package com.example.newsapp
 
 import android.app.Dialog
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -13,11 +12,13 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapi.api.NewsAPIService
-import com.example.newsapi.databinding.FragmentFavouriteHeadlinesBinding
-import com.example.newsapi.model.NewsResponse
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.example.newsapp.api.NewsAPIService
+import com.example.newsapp.databinding.FragmentFavouriteHeadlinesBinding
+import com.example.newsapp.model.NewsResponse
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,7 +32,6 @@ class FavouriteHeadlinesFragment : Fragment() {
     val API_Key: String = "9a31420d0db94cbab8274e37c6fdcda5"
 
     private lateinit var binding: FragmentFavouriteHeadlinesBinding
-    private lateinit var sharedPref: SharedPreferences
     private lateinit var countriesAdapter: CountriesAdapter
     private lateinit var categoryAdapter: CategoriesAdapter
     private var countryNames = ArrayList<String>()
@@ -177,47 +177,75 @@ class FavouriteHeadlinesFragment : Fragment() {
         dialog.show()
     }
 
+    // Save data to Firestore
     private fun saveData() {
-        sharedPref = requireContext().getSharedPreferences("SavedData", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        val json = Gson()
+        val db = FirebaseFirestore.getInstance()
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser != null) {
+            val userId = firebaseUser.uid
 
-        val countryJson = json.toJson(countryNames)
-        val categoryJson = json.toJson(categoryNames)
+            // Get a reference to the user's document in Firestore
+            val userDocRef = db.collection("users").document(userId)
 
-        editor.putString("Countries", countryJson)
-        editor.putString("Categories", categoryJson)
-        editor.apply()
+
+            val updates = hashMapOf<String, Any>(
+                "countries" to FieldValue.arrayUnion(*countryNames.toTypedArray()),
+                "categories" to FieldValue.arrayUnion(*categoryNames.toTypedArray())
+            )
+
+
+            userDocRef.update(updates)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "User favorites successfully updated")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error updating favorites", e)
+                }
+        }
     }
 
     private fun loadData() {
-        sharedPref = requireContext().getSharedPreferences("SavedData", Context.MODE_PRIVATE)
+        val db = FirebaseFirestore.getInstance()
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser != null) {
+            val userId = firebaseUser.uid
 
-        val json = Gson()
+            // Retrieve user favorites from Firestore
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val userFavorites = document.data
 
-        val countryJson = sharedPref.getString("Countries", null)
-        val categoryJson = sharedPref.getString("Categories", null)
 
-        val arr = object : TypeToken<ArrayList<String>>() {}.type
+                        val newCountries =
+                            (userFavorites?.get("countries") as? List<String>)?.toMutableList()
+                                ?: mutableListOf()
+                        countryNames.addAll(newCountries)
 
-        if (countryJson != null) {
-            try {
-                countryNames = json.fromJson(countryJson, arr) ?: ArrayList()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+                        val newCategories =
+                            (userFavorites?.get("categories") as? List<String>)?.toMutableList()
+                                ?: mutableListOf()
+                        categoryNames.addAll(newCategories)
+
+
+                        // Log to check data retrieval
+                        Log.d("Firestore", "Countries: $countryNames")
+                        Log.d("Firestore", "Categories: $categoryNames")
+
+                        // Update the adapters with the loaded data
+                        countriesAdapter.notifyDataSetChanged()
+                        categoryAdapter.notifyDataSetChanged()
+                    } else {
+                        Log.d("Firestore", "No favorites found for user")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error loading favorites", e)
+                }
         } else {
-            countryNames = ArrayList()
-        }
-
-        if (categoryJson != null) {
-            try {
-                categoryNames = json.fromJson(categoryJson, arr) ?: ArrayList()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            categoryNames = ArrayList()
+            Log.e("Firestore", "User not authenticated")
         }
     }
+
+
 }

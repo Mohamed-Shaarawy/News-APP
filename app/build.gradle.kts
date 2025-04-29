@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.newsapi"
+    namespace = "com.example.newsapp"
     compileSdk = 35
 
     buildFeatures {
@@ -13,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.newsapi"
+        applicationId = "com.example.newsapp"
         minSdk = 33
         targetSdk = 35
         versionCode = 1
@@ -63,6 +64,20 @@ dependencies {
 
     implementation("androidx.credentials:credentials:1.5.0")
     implementation(libs.play.services.auth)
+
+    // Import the Firebase BoM
+    implementation(platform(libs.firebase.bom))
+
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+
+    implementation (libs.firebase.firestore)
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

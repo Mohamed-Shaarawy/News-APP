@@ -1,4 +1,4 @@
-package com.example.newsapi
+package com.example.newsapp
 
 import android.os.Bundle
 import android.util.Log
@@ -11,8 +11,8 @@ import android.widget.EditText
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsapi.api.NewsAPIService
-import com.example.newsapi.model.NewsResponse
+import com.example.newsapp.api.NewsAPIService
+import com.example.newsapp.model.NewsResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,7 +54,7 @@ class NewsRecyclerFragment : Fragment() {
         "Germany" to "de",
         "France" to "fr",
     )
-
+    val CHANNEL_ID = "1"
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var newsAdapter: NewsAdapter
@@ -79,6 +79,7 @@ class NewsRecyclerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // get the passed args
         val countryName = arguments?.getString("countryName") ?: "US"
         val categoryName = arguments?.getString("categoryName") ?: ""
@@ -115,14 +116,22 @@ class NewsRecyclerFragment : Fragment() {
     }
 
     private fun fetchTopNews(country: String, category: String) {
-
-        val countryCode = countryCodeMap[country] ?: "us" // Default to "us" (United States) if country not found
+        val mainActivity = activity as MainActivity
+        val countryCode =
+            countryCodeMap[country] ?: "us" // Default to "us" (United States) if country not found
 
         // Ensure category is correctly passed
         val categoryName = category
-        Log.d("fetchTopResult", "Fetching news for: $country, Category: $category, CategoryName = $categoryName")  // Log the country and category
+        Log.d(
+            "fetchTopResult",
+            "Fetching news for: $country, Category: $category, CategoryName = $categoryName"
+        )  // Log the country and category
 
-        retrofit.getTopNews(country = countryCode.toString(), category = categoryName.toString(), apiKey = API_Key)
+        retrofit.getTopNews(
+            country = countryCode.toString(),
+            category = categoryName.toString(),
+            apiKey = API_Key
+        )
             .enqueue(object : Callback<NewsResponse> {
                 override fun onResponse(
                     call: Call<NewsResponse>,
@@ -138,7 +147,10 @@ class NewsRecyclerFragment : Fragment() {
                     URL.clear()
 
                     if (response.isSuccessful) {
-                        Log.d("NewsAPI", "Successfully fetched news for $country, Category: $category")
+                        Log.d(
+                            "NewsAPI",
+                            "Successfully fetched news for $country, Category: $category"
+                        )
 
                         val articles = response.body()?.articles ?: emptyList()
 
@@ -167,6 +179,7 @@ class NewsRecyclerFragment : Fragment() {
 
                             // Attach the adapter to the RecyclerView
                             recyclerView.adapter = newsAdapter
+                            mainActivity.startNotification(requireContext())
                         } else {
                             // If already initialized, just notify the adapter that data has changed
                             newsAdapter.notifyDataSetChanged()
@@ -185,4 +198,6 @@ class NewsRecyclerFragment : Fragment() {
     }
 
 }
+
+
 
