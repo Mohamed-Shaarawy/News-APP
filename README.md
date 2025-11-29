@@ -2,7 +2,6 @@
 
 An Android application built with **Kotlin** that integrates with **NewsAPI.org** to display top headlines and search results. The app supports **country & category-based news**, **search with sorting**, **Google Sign-In**, **per-user favorites stored in Firestore**, and **local notifications** when new headlines are loaded.
 
-> **Tech stack:** Kotlin (100%)
 
 ---
 
